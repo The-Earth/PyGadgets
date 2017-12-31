@@ -1,4 +1,4 @@
-# Single-side-scanner-solution
+﻿# Single-side-scanner-solution
 解决只能进行单面扫描的扫描仪的问题
 ## 使用
 1. 将一叠文稿从进纸器分别进行正反两次扫描，生成两个pdf文件

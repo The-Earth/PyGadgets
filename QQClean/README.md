@@ -1,4 +1,4 @@
-# QQClean
+﻿# QQClean
 For deleting all QQ-related files and directories after uninstalling QQ on Android.
 I write this tool only for fun.
 ## Dependency

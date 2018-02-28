@@ -1,0 +1,5 @@
+f = open('text.txt', 'r', encoding='utf-8')
+txt = f.read().replace('\n',' ')
+f = open('text.txt', 'w', encoding='utf-8')
+f.write(txt)
+f.close()

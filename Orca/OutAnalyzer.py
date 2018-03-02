@@ -54,5 +54,5 @@ def main(outname, targetname):
 
 #Main
 outname = input('Output File Name:')
-targetname = input('Target File Name:')
+targetname = input('Target File Name(end with .csv):')
 main(outname, targetname)

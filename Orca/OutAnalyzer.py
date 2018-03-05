@@ -52,7 +52,7 @@ def main(outname, targetname):
     with open(targetname, 'a') as tar:
         tar.writelines(res)
 
-#Main
-outname = input('Output File Name:')
-targetname = input('Target File Name(end with .csv):')
-main(outname, targetname)
+if __name__ == '__main__':
+    outname = input('Output File Name:')
+    targetname = input('Target File Name(end with .csv):')
+    main(outname, targetname)

@@ -4,13 +4,6 @@ Scripts that helps me deal with files related to ORCA and molecules.
 ## OutAnalyzer.py
 Collect atom coordinates from input file presented in output file and final result. Then match the result with the correct atom and save as csv file.
 
-Coordinate section should be the last section in input file and it should be closely followed by `END OF INPUT`. It should be like:
-```
-| 49> H          2.13594       10.34509        3.96676	
-
-| 50>                          ****END OF INPUT****
-```
-
 These scripts are for **ORCA Windows version**. For Linux version, replace
 ```
 for i in range(len(text_array)):

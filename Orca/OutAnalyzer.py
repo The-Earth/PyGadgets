@@ -1,5 +1,5 @@
 ﻿def getCor(string, index):
-    if 'END OF INPUT' in string:
+    if '*' in string:
         return 'end'
     
     array = string.split()

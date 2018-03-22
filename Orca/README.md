@@ -26,7 +26,7 @@ H        2.9262000000      0.0000000000     -0.0001000000
 *
 ```
 
-Then modify the directories in the script. Hints are provided in the script. If you understand how ORCA works and have a basic knowledge of Python3, it should not be difficult. Here I assume that the model file and final output files are stored in ./ and calculations are done in ./calc . Anyway, full paths are always recommended! 
+Then modify the directories in the script. Hints are provided in the script. If you understand how ORCA works and have a basic knowledge of Python3, it should not be difficult. Here I assume that the model file and final output files are stored in `./` and calculations are done in `./calc` . Anyway, **full paths** are always recommended! 
 
 Correct ORCA keywords are demanded for the function and basis sets list.
 

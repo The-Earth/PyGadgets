@@ -6,4 +6,4 @@ I write this tool only for fun.
 ## What do I do.
 Delete all files and directories included in the given directories with "QQ" in their name.
 ## How to use
-Put Clean.py under target directory (usually 'tencent') and run it. 
+Replace cwd with the absolute direction of Tencent folder.

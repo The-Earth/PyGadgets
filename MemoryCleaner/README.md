@@ -7,5 +7,4 @@ JUST KIDDING!!! But it DOES work to some extent.
 Run the script and keep watching the free memory remains. Stop (Control + C) it when memory usage can't increase more OR 93% of the memory is occupied.
 
 ## Dependency
-* Python 3.x
-* It will not work on Python 2.
+* None

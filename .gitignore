@@ -97,3 +97,4 @@ ENV/
 
 # mypy
 .mypy_cache/
+NewLineEliminator/1.txt

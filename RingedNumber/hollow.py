@@ -1,4 +1,7 @@
 def main(number):
+    if number not in list(range(1,21)):
+        return 'Not supported yet.'
+        
     hollow = {1: b'\xe2\x91\xa0',
               2: b'\xe2\x91\xa1',
               3: b'\xe2\x91\xa2',

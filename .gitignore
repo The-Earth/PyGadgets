@@ -98,3 +98,6 @@ ENV/
 # mypy
 .mypy_cache/
 NewLineEliminator/1.txt
+.idea/modules.xml
+.idea/PyGadgets.iml
+.idea/workspace.xml

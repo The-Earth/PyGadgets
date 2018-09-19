@@ -26,7 +26,7 @@ H        2.9262000000      0.0000000000     -0.0001000000
 *
 ```
 
-Then modify the directories in the script. Hints are provided in the script. If you understand how ORCA works and have a basic knowledge of Python3, it should not be difficult. Here I assume that the model file and final output files are stored in `./` and calculations are done in `./calc` . Anyway, **full paths** are always recommended! 
+Then run the script and follow instructions. **Directory to model file** means its pure directory without file name. It works with **Directory for calculation** to creat actual directory for calculation, which means what you input in calculation directory will be added to directory for model file and becomes a sub-directory of it. 
 
 Correct ORCA keywords are demanded for the function and basis sets list.
 
@@ -57,6 +57,10 @@ for i in range(len(text_array)):
                 index += 1
 ```
 ORCA Windows version insertes an additional line between original lines of input file in output file.
+
+## PointChargeIterator.py
+
+This script is for some charge iteration calculation. It expects several point charge marked as "Q" in ORCA input and a selected center atom. Then it read "MULLIKEN ATOMIC CHARGES" and change "Q" to the charge of center atom in the previous calculation. Once charge difference between two calculations is under a certain value, it will stop. Modify the script to meet your demand.
 
 ## Dependency
 

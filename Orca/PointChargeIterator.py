@@ -29,7 +29,7 @@ def main(inp, out, centerElement):
             log.write('--------\nSurrounding charge set as '+OldSurrCharge+'\nCore '+centerElement\
                       +' charge '+NewSurrCharge+'\n--------\n')
 
-        if abs(NewSurrCharge - OldSurrCharge) < 0.1:
+        if abs(float(NewSurrCharge) - float(OldSurrCharge)) < 0.1:
             break
 
         with open(inp, 'r', encoding='utf-8') as fin:   # Edit input file

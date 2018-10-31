@@ -4,7 +4,7 @@ Tools to assist using [VASP](https://www.vasp.at/).
 
 ## vasptool.py
 
-Creat an OUTCAR object:
+Creat an `vasptool.OUTCAR` object:
 
 ```python
 from vasptool.py import OUTCAR
@@ -57,3 +57,13 @@ Its return value is like:
 ## Demos
 
 `cetensor.py` is a demo for getting chemical shift.
+
+## Critical problem
+
+The first line of  `POSCAR` , which represents name of this task, should be in form of:
+
+```
+li6 o2 cl3
+```
+
+Its sequence should be the same as that of atom coordinates and the number equals to number of atoms of that element. **I won't fix this problem**.

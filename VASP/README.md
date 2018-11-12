@@ -7,7 +7,7 @@ Tools to assist using [VASP](https://www.vasp.at/).
 Creat an `vasptool.OUTCAR` object:
 
 ```python
-from vasptool.py import OUTCAR
+from vasptool import OUTCAR
 outob = OUTCAR()
 ```
 

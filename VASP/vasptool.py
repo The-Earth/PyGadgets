@@ -1,6 +1,7 @@
-class OUTCAR(object):
+class OUTCAR:
 
     def __init__(self, filename='OUTCAR'):
+        self.filename = filename
         # get text
         self.text = list(open(filename, 'r'))
         # find poscar
@@ -76,6 +77,28 @@ class OUTCAR(object):
                     f.write(t)
 
         return cs
+
+
+class INCAR:
+
+    def __init__(self, filename='INCAR'):
+        self.filename=filename
+        # get text
+        self.text = list(open(filename, 'r'))
+
+    def set_key(self, key, value):
+        text_to_set = '%s = %s # Set by vasptool\n' % (key, value)
+        done = 0
+        for i in range(len(self.text)):
+            if key in self.text[i]:
+                self.text[i] = text_to_set
+                done = 1
+        if not done:
+            self.text.append(text_to_set)
+
+    def save(self):
+        with open(self.filename, 'w') as f:
+            f.write(''.join(self.text))
                 
 
 if __name__ == '__main__':

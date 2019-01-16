@@ -3,8 +3,8 @@
 Tools to assist using [VASP](https://www.vasp.at/).
 
 ## vasptool.py
-
-Creat an `vasptool.OUTCAR` object:
+### OUCAR
+Creat an `OUTCAR` object:
 
 ```python
 from vasptool import OUTCAR
@@ -20,7 +20,7 @@ outob = OUTCAR(filename='OUTCAR1')
 Get text of `OUTCAR` in list form:
 
 ```python
-outob.text
+outob.text_list
 ```
 
 Get `POSCAR` from `OUTCAR`:
@@ -53,6 +53,39 @@ Its return value is like:
  3: 'o 16.321',
 }
 ```
+
+### INCAR
+Creat an INCAR object:
+ ```python
+from vasptool import INCAR
+inob = INCAR()
+```
+
+It will read `OUTCAR` in working directory. If `OUTCAR` is renamed or moved:
+```python
+inob = INCAR(filename='OUTCAR1')
+```
+
+Get text of `INCAR` in list form:
+```python
+inob.text_list
+```
+
+Set value for specific key in INCAR:
+```python
+inob.set_key(key, value)
+```
+Both key and value are `str`. This operation will change content of `inob.text_list` but will not modify the file.
+
+Save changes to file on the disk:
+```python
+inob.save()
+```
+Save as other file:
+```python
+inob.save(target)
+```
+Write your target directory in `target`.
 
 ## Demos
 

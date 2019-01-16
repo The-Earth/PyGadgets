@@ -93,6 +93,7 @@ class INCAR:
             if key in self.text_list[i]:
                 self.text_list[i] = text_to_set
                 done = 1
+                break
         if not done:
             self.text_list.append(text_to_set)
 

@@ -3,7 +3,7 @@ class OUTCAR:
     def __init__(self, filename='OUTCAR'):
         self.filename = filename
         # get text
-        self.text = list(open(filename, 'r'))
+        self.text_list = list(open(filename, 'r'))
         # find poscar
         self.poscar = []
         '''
@@ -11,7 +11,7 @@ class OUTCAR:
         [['li','4'],['o','2']]
         which represent sequence of elements and their amount
         '''
-        for line in self.text:
+        for line in self.text_list:
             if 'POSCAR' in line:
                 print(line)
                 for comp in line.split():
@@ -37,24 +37,24 @@ class OUTCAR:
         cs = dict()
         # Find start and end
         csStart, csEnd = 0, 0
-        for i in range(len(self.text)):
-            if '  UNSYMMETRIZED TENSORS \n' == self.text[i]:
+        for i in range(len(self.text_list)):
+            if '  UNSYMMETRIZED TENSORS \n' == self.text_list[i]:
                 csStart = i
-            if '  SYMMETRIZED TENSORS \n' == self.text[i]:
+            if '  SYMMETRIZED TENSORS \n' == self.text_list[i]:
                 csEnd = i
                 break
 
         i, tensordia = csStart + 1, 0
         while i < csEnd:
             # get atom id (start from 1)
-            atomid = self.text[i].split()[1]
+            atomid = self.text_list[i].split()[1]
             # add diagonal element of cs tensor
             i += 1
-            tensordia += float(self.text[i].split()[0])
+            tensordia += float(self.text_list[i].split()[0])
             i += 1
-            tensordia += float(self.text[i].split()[1])
+            tensordia += float(self.text_list[i].split()[1])
             i += 1
-            tensordia += float(self.text[i].split()[2])
+            tensordia += float(self.text_list[i].split()[2])
             # log data
             cs.setdefault(int(atomid), str(tensordia/3))
             # move and init
@@ -84,22 +84,26 @@ class INCAR:
     def __init__(self, filename='INCAR'):
         self.filename=filename
         # get text
-        self.text = list(open(filename, 'r'))
+        self.text_list = list(open(filename, 'r'))
 
     def set_key(self, key, value):
         text_to_set = '%s = %s # Set by vasptool\n' % (key, value)
         done = 0
-        for i in range(len(self.text)):
-            if key in self.text[i]:
-                self.text[i] = text_to_set
+        for i in range(len(self.text_list)):
+            if key in self.text_list[i]:
+                self.text_list[i] = text_to_set
                 done = 1
         if not done:
-            self.text.append(text_to_set)
+            self.text_list.append(text_to_set)
 
     def save(self):
         with open(self.filename, 'w') as f:
-            f.write(''.join(self.text))
-                
+            f.write(''.join(self.text_list))
+
+    def save_as(self, target):
+        with open(target, 'w') as f:
+            f.write(''.join(self.text_list))
+
 
 if __name__ == '__main__':
     pass

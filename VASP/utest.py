@@ -22,3 +22,4 @@ for d in os.listdir():  # submit
     if os.path.isdir(d):
         if 'INCAR' in os.listdir(d):
             os.system('bsub < vasp.sh')
+            print(d, 'submitted.')

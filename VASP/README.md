@@ -59,7 +59,7 @@ Creat an INCAR object:
  ```python
 from vasptool import INCAR
 inob = INCAR()
-```
+ ```
 
 It will read `OUTCAR` in working directory. If `OUTCAR` is renamed or moved:
 ```python
@@ -89,7 +89,8 @@ Write your target directory in `target`.
 
 ## Demos
 
-`cetensor.py` is a demo for getting chemical shift.
+- `cetensor.py` is a demo for getting chemical shift.
+- `utest.py`: Do not use.
 
 ## Critical problem
 

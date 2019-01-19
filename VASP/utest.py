@@ -1,5 +1,6 @@
 from vasptool import INCAR
 import os
+import shutil
 
 key = input('Key: ')
 values = input('Values (separate by comma ): ').split(',')
@@ -18,8 +19,12 @@ for i in range(len(values)):    # edit INCAR
     inob.save()
     print(future_file, 'created.')
 
-for d in os.listdir():  # submit
-    if os.path.isdir(d):
-        if 'INCAR' in os.listdir(d):
-            os.system('bsub < vasp.sh')
-            print(d, 'submitted.')
+for d in os.listdir():  # copy file
+    if os.path.isfile(d, ):
+        for i in values:
+            shutil.copy(d, '%s%s/%s'%(key, i, d))
+
+for d in os.listdir(): # submit
+    if os.path.isdir(d) and 'INCAR' in os.listdir(d):
+        os.system('bsub < vasp.sh')
+        print(d, 'submitted.')

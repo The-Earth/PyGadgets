@@ -84,7 +84,10 @@ class INCAR:
     def __init__(self, filename='INCAR'):
         self.filename=filename
         # get text
-        self.text_list = list(open(filename, 'r'))
+        try:
+            self.text_list = list(open(filename, 'r'))
+        except FileNotFoundError:
+            self.text_list = list()
 
     def set_key(self, key, value):
         text_to_set = '%s = %s # Set by vasptool\n' % (key, value)

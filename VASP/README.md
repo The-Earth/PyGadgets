@@ -38,9 +38,9 @@ outob.poscar
 Get chemical shift:
 
 ```python
-outob.getcs(out='cs.csv') # write chemical shift to cs.csv
+outob.getcs_tensor(out='cs.csv') # write chemical shift to cs.csv
 # or
-outob.getcs() # just return chemical shift
+outob.getcs_tensor() # just return chemical shift
 ```
 
 It will return a dictionary with chemical shift information and if `outfile` is not `None`, it will save that information is csv format.

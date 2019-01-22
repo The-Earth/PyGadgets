@@ -25,8 +25,7 @@ class OUTCAR:
                             pass
                 break
 
-    def getcs_tensor(self, out):
-        print(self.poscar)
+    def getcs_tensor(self, out=None):
         '''
         cs is in form of:
         {1: 'li 2.345',
@@ -78,7 +77,7 @@ class OUTCAR:
 
         return cs
 
-    def get_Afc(self, out):
+    def get_Afc(self, out=None):
         start, A_tot_list = -1, dict()
         for i in range(len(self.text_list)):
             if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.text_list[i]:
@@ -88,12 +87,15 @@ class OUTCAR:
         if start == -1:
             raise Exception('Fermi contact A not found in OUTCAR')
         i = start
-        while self.text_list[i].split()[0] is int:
-            A_tot_list[int(self.text_list[i].split()[0]) + 1] = self.text_list[i].split()[5]
+        while not '--' in self.text_list[i].split()[0]:
+            A_tot_list[int(self.text_list[i].split()[0])] = float(self.text_list[i].split()[5])
+            i += 1
 
         if out:
+            with open(out, 'a') as f:
+                f.write('atom index,A_tot\n')
             for i in range(len(A_tot_list)):
-                t = '%s,%s\n' % (str(i+1), A_tot_list[i+1])
+                t = '%s,%s\n' % (str(i+1), str(A_tot_list[i+1]))
                 with open(out, 'a') as f:
                     f.write(t)
 

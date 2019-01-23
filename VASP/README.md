@@ -61,9 +61,9 @@ from vasptool import INCAR
 inob = INCAR()
  ```
 
-It will read `OUTCAR` in working directory. If `OUTCAR` is renamed or moved:
+It will read `INCAR` in working directory. If `INCAR` is renamed or moved:
 ```python
-inob = INCAR(filename='OUTCAR1')
+inob = INCAR(filename='INCAR1')
 ```
 
 Get text of `INCAR` in list form:

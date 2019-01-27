@@ -27,7 +27,7 @@ for d in os.listdir():  # copy file
             path = '%s_%s' % (key, i.replace(' ', '_'))
             if d == 'vasp.sh':
                 with open(d, 'r') as f:
-                    sub = f.read().replace('-J U0', '-J U0%s%s' % (key, i.replace(' ', '_')))
+                    sub = f.read().replace('-J VASP', '-J VASP%s%s' % (key, i.replace(' ', '_'))) # TODO Regex replace
                 with open(d+'_temp', 'w') as f:
                     f.write(sub)
                 shutil.copy(d+'_temp', '%s/%s'%(path, d))
@@ -41,5 +41,7 @@ for d in os.listdir():  # copy file
 
 for d in os.listdir(): # submit
     if os.path.isdir(d) and 'INCAR' in os.listdir(d):
-        os.system('bsub < %s/vasp.sh' % d)
+        os.chdir(d)
+        os.system('bsub < vasp.sh')
         print(d, 'submitted.')
+        os.chdir('..')

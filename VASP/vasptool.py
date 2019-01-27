@@ -113,7 +113,7 @@ class INCAR:
             self.text_list = list()
 
     def set_key(self, key, value):
-        text_to_set = '%s = %s # Set by vasptool\n' % (key, value)
+        text_to_set = '\n%s = %s # Set by vasptool\n' % (key, value)
         done = 0
         for i in range(len(self.text_list)):
             if key in self.text_list[i]:

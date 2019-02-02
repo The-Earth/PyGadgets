@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 class OUTCAR:
 
     def __init__(self, filename='OUTCAR'):
@@ -77,8 +79,8 @@ class OUTCAR:
 
         return cs
 
-    def get_Afc(self, out=None):
-        start, A_tot_list = -1, dict()
+    def get_Afc(self, out=None, poscar='POSCAR'):
+        start, A_tot_list = -1, OrderedDict()
         for i in range(len(self.text_list)):
             if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.text_list[i]:
                 start = i + 4
@@ -87,15 +89,19 @@ class OUTCAR:
         if start == -1:
             raise Exception('Fermi contact A not found in OUTCAR')
         i = start
-        while  '--' not in self.text_list[i].split()[0]:
-            A_tot_list[int(self.text_list[i].split()[0])] = float(self.text_list[i].split()[5])
+        while '--' not in self.text_list[i].split()[0]:
+            ind = int(self.text_list[i].split()[0])
+            Afc = float(self.text_list[i].split()[5])
+            A_tot_list[ind] = Afc
             i += 1
 
         if out:
+            pos = POSCAR(filename=poscar)
             with open(out, 'a') as f:
-                f.write('\natom index,A_tot\n')
-            for i in range(len(A_tot_list)):
-                t = '%s,%s\n' % (str(i+1), str(A_tot_list[i+1]))
+                f.write('\nindex,element,A_tot,a,b,c\n')
+            for i in A_tot_list:
+                cor = pos.get_pos(i)
+                t = '%s,%s,%f,%f,%f,%f\n' % (i, pos.get_element(ind=i), A_tot_list[i], cor[0], cor[1], cor[2])
                 with open(out, 'a') as f:
                     f.write(t)
 
@@ -163,7 +169,6 @@ class POSCAR:
         :return: A dict containing all atoms and their position.
         Positions are in tuple and in form of coordinate type defined in POSCAR
         """
-        from collections import OrderedDict
         line_id = 8
         pos_dic = OrderedDict()
         for i in range(len(self.elements)):

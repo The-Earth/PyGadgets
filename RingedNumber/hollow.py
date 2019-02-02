@@ -1,7 +1,7 @@
 def main(number):
-    if number not in list(range(1,21)):
+    if number not in list(range(1, 21)):
         return 'Not supported yet.'
-        
+
     hollow = {1: b'\xe2\x91\xa0',
               2: b'\xe2\x91\xa1',
               3: b'\xe2\x91\xa2',
@@ -17,8 +17,8 @@ def main(number):
               13: b'\xe2\x91\xac',
               14: b'\xe2\x91\xad',
               15: b'\xe2\x91\xae',
-              15: b'\xe2\x91\xaf',
-              16: b'\xe2\x91\xb0',
+              16: b'\xe2\x91\xaf',
+              17: b'\xe2\x91\xb0',
               18: b'\xe2\x91\xb1',
               19: b'\xe2\x91\xb2',
               20: b'\xe2\x91\xb3'}
@@ -28,4 +28,4 @@ def main(number):
 if __name__ == '__main__':
     while 1:
         num = int(input('Number: '))
-        print('Ringed: '+main(num))
+        print('Ringed: ' + main(num))

@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+
 class OUTCAR:
 
     def __init__(self, filename='OUTCAR'):
@@ -21,7 +22,6 @@ class OUTCAR:
                         continue
                     for i in range(len(comp)):
                         try:
-                            a = int(comp[i])
                             self.poscar.append([comp[:i], comp[i:]])
                         except ValueError:
                             pass
@@ -193,7 +193,7 @@ class POSCAR:
         return pos_dic
 
     def get_pos(self, ind):
-        li=[]
+        li = []
         for i in range(3):
             li.append(float(self.text_list[ind+7].split()[i]))
         return tuple(li)

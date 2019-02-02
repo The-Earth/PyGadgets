@@ -7,7 +7,7 @@ class OUTCAR:
         # find poscar
         self.poscar = []
         '''
-        postcar is inform:
+        poscar is inform:
         [['li','4'],['o','2']]
         which represent sequence of elements and their amount
         '''
@@ -26,13 +26,13 @@ class OUTCAR:
                 break
 
     def getcs_tensor(self, out=None):
-        '''
+        """
         cs is in form of:
         {1: 'li 2.345',
          2: 'li 2.346',
          3: 'o 16.321',
         }
-        '''
+        """
         cs = dict()
         # Find start and end
         csStart, csEnd = 0, 0
@@ -93,7 +93,7 @@ class OUTCAR:
 
         if out:
             with open(out, 'a') as f:
-                f.write('atom index,A_tot\n')
+                f.write('\natom index,A_tot\n')
             for i in range(len(A_tot_list)):
                 t = '%s,%s\n' % (str(i+1), str(A_tot_list[i+1]))
                 with open(out, 'a') as f:
@@ -130,6 +130,63 @@ class INCAR:
     def save_as(self, target):
         with open(target, 'w') as f:
             f.write(''.join(self.text_list))
+
+
+class POSCAR:
+
+    def __init__(self, filename='POSCAR'):
+        self.filename = filename
+        self.text_list = list(open(filename, 'r'))
+        self.len = len(self.text_list)
+        self.atoms = self.text_list[5].split()
+        self.atoms_num = self.text_list[6].split()
+        self.cord_type = self.text_list[7].strip()[0]
+        # Verify POSCAR
+        if len(self.atoms) != len(self.atoms_num):
+            raise IndexError("POSCAR: Line 7 doesn't match line 6.")
+        for i in range(len(self.atoms_num)):
+            self.atoms_num[i] = int(self.atoms_num[i])
+        if sum(self.atoms_num) != self.len - 8:
+            raise IndexError("POSCAR: Positions doesn't match numbers defined in line 7.")
+
+    def get_num_dict(self):
+        """
+        :return: A dict with elements as key and numbers of them as value. {'Li'":2, 'O':4}
+        """
+        num_dict = dict()
+        for i in range(len(self.atoms)):
+            num_dict[self.atoms[i]] = self.atoms_num[i]
+        return num_dict
+
+    def get_full_pos(self, out=None):
+        """
+        :return: A dict containing all atoms and their position.
+        Positions are in tuple and in form of coordinate type defined in POSCAR
+        """
+        from collections import OrderedDict
+        atom_id = 8
+        pos_dic = OrderedDict() # ordered ??
+        for i in range(len(self.atoms)):
+            for j in range(self.atoms_num[i]):
+                a = float(self.text_list[atom_id].split()[0])
+                b = float(self.text_list[atom_id].split()[1])
+                c = float(self.text_list[atom_id].split()[2])
+                pos_dic[i] = (a, b, c)
+                atom_id += 1
+
+        if out:
+            with open(out, 'a') as f:
+                f.write('\nindex,element,a,b,c\n')
+                ind = 1
+            for ele in pos_dic:
+                a = pos_dic[ele][0]
+                b = pos_dic[ele][1]
+                c = pos_dic[ele][2]
+                with open(out, 'a') as f:
+                    f.write('%d,%s,%f,%f,%f\n' % (ind, ele, a, b, c))
+                ind += 1
+
+        return pos_dic
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ class OUTCAR:
         # get text
         self.text_list = list(open(filename, 'r'))
         # find poscar
-        self.poscar = []
+        self.poscar = []  # TODO use POSCAR class
         '''
         poscar is inform:
         [['li','4'],['o','2']]
@@ -20,7 +20,7 @@ class OUTCAR:
                     for i in range(len(comp)):
                         try:
                             a = int(comp[i])
-                            self.poscar.append([comp[:i],comp[i:]])
+                            self.poscar.append([comp[:i], comp[i:]])
                         except ValueError:
                             pass
                 break
@@ -64,7 +64,7 @@ class OUTCAR:
         preatom = 0
         for i in range(len(self.poscar)):
             num = int(self.poscar[i][1])
-            for j in range(1,num+1):
+            for j in range(1, num+1):
                 cs[preatom+j] = self.poscar[i][0] + ','+cs[preatom+j]
             preatom += num
 
@@ -87,7 +87,7 @@ class OUTCAR:
         if start == -1:
             raise Exception('Fermi contact A not found in OUTCAR')
         i = start
-        while not '--' in self.text_list[i].split()[0]:
+        while  '--' not in self.text_list[i].split()[0]:
             A_tot_list[int(self.text_list[i].split()[0])] = float(self.text_list[i].split()[5])
             i += 1
 
@@ -105,7 +105,7 @@ class OUTCAR:
 class INCAR:
 
     def __init__(self, filename='INCAR'):
-        self.filename=filename
+        self.filename = filename
         # get text
         try:
             self.text_list = list(open(filename, 'r'))
@@ -138,15 +138,15 @@ class POSCAR:
         self.filename = filename
         self.text_list = list(open(filename, 'r'))
         self.len = len(self.text_list)
-        self.atoms = self.text_list[5].split()
-        self.atoms_num = self.text_list[6].split()
+        self.elements = self.text_list[5].split()
+        self.ele_num = self.text_list[6].split()
         self.cord_type = self.text_list[7].strip()[0]
         # Verify POSCAR
-        if len(self.atoms) != len(self.atoms_num):
+        if len(self.elements) != len(self.ele_num):
             raise IndexError("POSCAR: Line 7 doesn't match line 6.")
-        for i in range(len(self.atoms_num)):
-            self.atoms_num[i] = int(self.atoms_num[i])
-        if sum(self.atoms_num) != self.len - 8:
+        for i in range(len(self.ele_num)):
+            self.ele_num[i] = int(self.ele_num[i])
+        if sum(self.ele_num) != self.len - 8:
             raise IndexError("POSCAR: Positions doesn't match numbers defined in line 7.")
 
     def get_num_dict(self):
@@ -154,8 +154,8 @@ class POSCAR:
         :return: A dict with elements as key and numbers of them as value. {'Li'":2, 'O':4}
         """
         num_dict = dict()
-        for i in range(len(self.atoms)):
-            num_dict[self.atoms[i]] = self.atoms_num[i]
+        for i in range(len(self.elements)):
+            num_dict[self.elements[i]] = self.ele_num[i]
         return num_dict
 
     def get_full_pos(self, out=None):
@@ -166,12 +166,12 @@ class POSCAR:
         from collections import OrderedDict
         line_id = 8
         pos_dic = OrderedDict()
-        for i in range(len(self.atoms)):
-            for j in range(self.atoms_num[i]):
+        for i in range(len(self.elements)):
+            for j in range(self.ele_num[i]):
                 a = float(self.text_list[line_id].split()[0])
                 b = float(self.text_list[line_id].split()[1])
                 c = float(self.text_list[line_id].split()[2])
-                pos_dic[line_id-7] = (self.atoms[i], a, b, c)
+                pos_dic[line_id-7] = (self.elements[i], a, b, c)
                 line_id += 1
 
         if out:
@@ -186,6 +186,28 @@ class POSCAR:
                     f.write('%d,%s,%f,%f,%f\n' % (ele, element, a, b, c))
 
         return pos_dic
+
+    def get_pos(self, ind):
+        return tuple(self.text_list[ind+7].split())
+
+    def get_element(self, ind=None, pos=None):
+        if not(ind or pos):
+            raise TypeError('get_element takes atom id or position but none was given.')
+        if ind and pos:
+            raise TypeError('get_element takes one of atom id or position but 2 were given')
+        if ind > sum(self.ele_num):
+            raise IndexError('Atom id is too large')
+        if ind:
+            for i in range(len(self.elements)):
+                if ind <= self.ele_num[i]:
+                    return self.elements[i]
+                else:
+                    ind -= self.ele_num[i]
+        if pos:
+            pass
+
+    def get_id(self, pos):
+        pass
 
 
 if __name__ == '__main__':

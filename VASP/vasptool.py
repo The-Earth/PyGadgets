@@ -193,7 +193,10 @@ class POSCAR:
         return pos_dic
 
     def get_pos(self, ind):
-        return tuple(self.text_list[ind+7].split())
+        li=[]
+        for i in range(3):
+            li.append(float(self.text_list[ind+7].split()[i]))
+        return tuple(li)
 
     def get_element(self, ind=None, pos=None):
         if not(ind or pos):

@@ -164,27 +164,26 @@ class POSCAR:
         Positions are in tuple and in form of coordinate type defined in POSCAR
         """
         from collections import OrderedDict
-        atom_id = 8
-        pos_dic = OrderedDict() # ordered ??
+        line_id = 8
+        pos_dic = OrderedDict()
         for i in range(len(self.atoms)):
             for j in range(self.atoms_num[i]):
-                a = float(self.text_list[atom_id].split()[0])
-                b = float(self.text_list[atom_id].split()[1])
-                c = float(self.text_list[atom_id].split()[2])
-                pos_dic[i] = (a, b, c)
-                atom_id += 1
+                a = float(self.text_list[line_id].split()[0])
+                b = float(self.text_list[line_id].split()[1])
+                c = float(self.text_list[line_id].split()[2])
+                pos_dic[line_id-7] = (self.atoms[i], a, b, c)
+                line_id += 1
 
         if out:
             with open(out, 'a') as f:
-                f.write('\nindex,element,a,b,c\n')
-                ind = 1
+                f.write('\natom,element,a,b,c\n')
             for ele in pos_dic:
-                a = pos_dic[ele][0]
-                b = pos_dic[ele][1]
-                c = pos_dic[ele][2]
+                element = pos_dic[ele][0]
+                a = pos_dic[ele][1]
+                b = pos_dic[ele][2]
+                c = pos_dic[ele][3]
                 with open(out, 'a') as f:
-                    f.write('%d,%s,%f,%f,%f\n' % (ind, ele, a, b, c))
-                ind += 1
+                    f.write('%d,%s,%f,%f,%f\n' % (ele, element, a, b, c))
 
         return pos_dic
 

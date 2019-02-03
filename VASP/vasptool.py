@@ -7,6 +7,7 @@ class OUTCAR:
         self.filename = filename
         # get text
         self.text_list = list(open(filename, 'r'))
+        self.len = len(self.text_list)
         # find poscar
         self.poscar = []  # TODO use POSCAR class
         '''
@@ -38,7 +39,7 @@ class OUTCAR:
         cs = dict()
         # Find start and end
         csStart, csEnd = 0, 0
-        for i in range(len(self.text_list)):
+        for i in range(self.len):
             if '  UNSYMMETRIZED TENSORS \n' == self.text_list[i]:
                 csStart = i
             if '  SYMMETRIZED TENSORS \n' == self.text_list[i]:
@@ -80,8 +81,8 @@ class OUTCAR:
         return cs
 
     def get_Afc(self, out=None, poscar='POSCAR'):
-        start, A_tot_list = -1, OrderedDict()
-        for i in range(len(self.text_list)):
+        start, A_tot_dict = -1, OrderedDict()
+        for i in range(self.len):
             if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.text_list[i]:
                 start = i + 4
                 break
@@ -92,20 +93,45 @@ class OUTCAR:
         while '--' not in self.text_list[i].split()[0]:
             ind = int(self.text_list[i].split()[0])
             Afc = float(self.text_list[i].split()[5])
-            A_tot_list[ind] = Afc
+            A_tot_dict[ind] = Afc
             i += 1
 
         if out:
             pos = POSCAR(filename=poscar)
             with open(out, 'a') as f:
                 f.write('\nindex,element,A_tot,a,b,c\n')
-            for i in A_tot_list:
+            for i in A_tot_dict:
                 cor = pos.get_pos(i)
-                t = '%s,%s,%f,%f,%f,%f\n' % (i, pos.get_element(ind=i), A_tot_list[i], cor[0], cor[1], cor[2])
+                t = '%s,%s,%f,%f,%f,%f\n' % (i, pos.get_element(ind=i), A_tot_dict[i], cor[0], cor[1], cor[2])
                 with open(out, 'a') as f:
                     f.write(t)
 
-        return A_tot_list
+        return A_tot_dict
+
+    def get_Adp(self, out=None):
+        import numpy
+        start, A_tensor_dict = -1, OrderedDict()
+        for i in range(self.len):
+            if 'Dipolar hyperfine coupling parameters (MHz)' in self.text_list[i]:
+                start = i + 4
+                break
+
+        if start == -1:
+            raise Exception('Dipolar A not found in OUTCAR')
+        i = start
+        while '--' not in self.text_list[i].split()[0]:
+            lt = self.text_list[i].split()
+            ind = int(lt[0])
+            Ad = numpy.mat((lt[1], lt[4], lt[5]),
+                           (0, lt[3], lt[6]),
+                           (0, 0, lt[4]))
+            A_tensor_dict[ind] = Ad
+            i += 1
+
+        if out:  # Output to file not supported
+            pass
+
+        return A_tensor_dict
 
 
 class INCAR:
@@ -216,6 +242,16 @@ class POSCAR:
 
     def get_id(self, pos):
         pass
+
+
+class CONTCAR(POSCAR):
+
+    def __init__(self, filename='CONTCAR'):
+        POSCAR.__init__(self, filename=filename)
+
+    def save_as(self, out='POSCAR'):
+        with open(out, 'w') as f:
+            f.write(''.join(self.text_list))
 
 
 if __name__ == '__main__':

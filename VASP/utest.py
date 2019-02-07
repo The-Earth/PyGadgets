@@ -33,7 +33,7 @@ for d in os.listdir():  # copy file
                 shutil.copy(d + '_temp', '%s/%s' % (path, d))
                 os.remove(d + '_temp')
             elif d.endswith('.py') or d == 'INCAR':
-                pass
+                continue
             else:
                 shutil.copy(d, '%s/%s' % (path, d))
 

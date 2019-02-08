@@ -22,6 +22,8 @@ for i in range(len(values)):  # edit INCAR
     print(future_file, 'created.')
 
 for d in os.listdir():  # copy file
+    if d.endswith('.py') or d == 'INCAR':
+        continue
     if os.path.isfile(d):
         for i in values:
             path = '%s_%s' % (key, i.replace(' ', '_'))
@@ -32,8 +34,6 @@ for d in os.listdir():  # copy file
                     f.write(sub)
                 shutil.copy(d + '_temp', '%s/%s' % (path, d))
                 os.remove(d + '_temp')
-            elif d.endswith('.py') or d == 'INCAR':
-                continue
             else:
                 shutil.copy(d, '%s/%s' % (path, d))
 

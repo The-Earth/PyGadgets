@@ -17,7 +17,6 @@ class OUTCAR:
         '''
         for line in self.text_list:
             if 'POSCAR' in line:
-                print(line)
                 for comp in line.split():
                     if 'POSCAR' in comp or '=' in comp:
                         continue
@@ -81,6 +80,13 @@ class OUTCAR:
         return cs
 
     def get_Afc(self, out=None, poscar='POSCAR'):
+        """
+        :param out: Output file path None for no output file (Default: None)
+        :param poscar: If output is needed, poscar is the path to POSCAR
+                        file containing postion info (Default: 'POSCAR')
+        :return: An ordered dict with atom index as keys and Afc as values
+                {1: 2.33, 2:3.44 ...}
+        """
         start, A_tot_dict = -1, OrderedDict()
         for i in range(self.len):
             if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.text_list[i]:

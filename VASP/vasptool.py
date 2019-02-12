@@ -178,7 +178,20 @@ class POSCAR:
             raise IndexError("POSCAR: Line 7 doesn't match line 6.")
         for i in range(len(self.ele_num)):
             self.ele_num[i] = int(self.ele_num[i])
-        if sum(self.ele_num) != self.len - 8:
+
+        # Detect end of positions
+        ifbreak = 0
+        for i in range(self.len):
+            if len(self.text_list[i].split()) == 0:
+                self.pos_end = i
+                ifbreak = 1
+                break
+        if ifbreak:
+            self.pos_len = self.pos_end - 8
+        else:
+            self.pos_len = self.len - 8
+        # Verify positions and numbers in line 7
+        if sum(self.ele_num) != self.pos_len:
             raise IndexError("POSCAR: Positions doesn't match numbers defined in line 7.")
 
     def get_num_dict(self):

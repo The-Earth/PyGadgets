@@ -119,8 +119,8 @@ class OUTCAR:
             lt = self.text_list[i].split()
             ind = int(lt[0])
             Ad = numpy.mat(((lt[1], lt[4], lt[5]),
-                           (lt[4], lt[3], lt[6]),
-                           (lt[5], lt[6], lt[4])), dtype='float64')
+                           (lt[4], lt[2], lt[6]),
+                           (lt[5], lt[6], lt[3])), dtype='float64')
             A_tensor_dict[ind] = Ad
             i += 1
 

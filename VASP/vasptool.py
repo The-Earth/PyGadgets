@@ -126,6 +126,24 @@ class OUTCAR:
 
         return A_tensor_dict
 
+    def get_CSA_valence(self):  # Excluding G=0
+        start, csa_dict = -1, OrderedDict()
+        for i in range(self.len):
+            if '(absolute, valence only)' in self.text_list[i]:
+                start = i + 1
+                break
+
+        if start == -1:
+            raise Exception('CSA tensor valence only not found in OUTCAR.')
+        i = start
+        while '--' not in self.text_list[i]:
+            ind = int(self.text_list[i].split()[0])
+            shift = float(self.text_list[i].split()[1])
+            csa_dict[ind] = shift
+            i += 1
+
+        return csa_dict
+
 
 class INCAR:
 

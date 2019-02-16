@@ -79,7 +79,7 @@ class OUTCAR:
 
         return cs
 
-    def get_Afc(self, out=None, poscar='POSCAR'):
+    def get_Afc(self):
         """
         :param out: Output file path None for no output file (Default: None)
         :param poscar: If output is needed, poscar is the path to POSCAR
@@ -102,19 +102,9 @@ class OUTCAR:
             A_tot_dict[ind] = Afc
             i += 1
 
-        if out:
-            pos = POSCAR(filename=poscar)
-            with open(out, 'a') as f:
-                f.write('\nindex,element,A_tot,a,b,c\n')
-            for i in A_tot_dict:
-                cor = pos.get_pos(i)
-                t = '%s,%s,%f,%f,%f,%f\n' % (i, pos.get_element(ind=i), A_tot_dict[i], cor[0], cor[1], cor[2])
-                with open(out, 'a') as f:
-                    f.write(t)
-
         return A_tot_dict
 
-    def get_Adp(self, out=None):
+    def get_Adp(self):
         import numpy
         start, A_tensor_dict = -1, OrderedDict()
         for i in range(self.len):
@@ -133,9 +123,6 @@ class OUTCAR:
                            (lt[5], lt[6], lt[4])), dtype='float64')
             A_tensor_dict[ind] = Ad
             i += 1
-
-        if out:  # Output to file not supported
-            pass
 
         return A_tensor_dict
 

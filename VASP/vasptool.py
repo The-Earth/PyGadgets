@@ -79,11 +79,8 @@ class OUTCAR:
 
         return cs
 
-    def get_Afc(self):
+    def get_Afc(self) -> OrderedDict:
         """
-        :param out: Output file path None for no output file (Default: None)
-        :param poscar: If output is needed, poscar is the path to POSCAR
-                        file containing postion info (Default: 'POSCAR')
         :return: An ordered dict with atom index as keys and Afc as values
                 {1: 2.33, 2:3.44 ...}
         """
@@ -104,7 +101,7 @@ class OUTCAR:
 
         return A_tot_dict
 
-    def get_Adp(self):
+    def get_Adp(self) -> OrderedDict:
         import numpy
         start, A_tensor_dict = -1, OrderedDict()
         for i in range(self.len):

@@ -144,6 +144,24 @@ class OUTCAR:
 
         return csa_dict
 
+    def get_magnetization(self) -> OrderedDict:
+        start, mag_dict = -1, OrderedDict()
+        for i in range(self.len):
+            if 'magnetization (x)' in self.text_list[i]:
+                start = i + 4
+                break
+
+        if start == -1:
+            raise Exception('magnetization (x) not found in OUTCAR.')
+        i = start
+        while '--' not in self.text_list[i]:
+            ind = int(self.text_list[i].split()[0])
+            shift = float(self.text_list[i].split()[4])
+            mag_dict[ind] = shift
+            i += 1
+
+        return mag_dict
+
 
 class INCAR:
 

@@ -79,7 +79,7 @@ class OUTCAR:
 
         return cs
 
-    def get_Afc(self) -> OrderedDict:
+    def get_Afc(self):
         """
         :return: An ordered dict with atom index as keys and Afc as values
                 {1: 2.33, 2:3.44 ...}
@@ -101,7 +101,7 @@ class OUTCAR:
 
         return A_tot_dict
 
-    def get_Adp(self) -> OrderedDict:
+    def get_Adp(self):
         import numpy
         start, A_tensor_dict = -1, OrderedDict()
         for i in range(self.len):

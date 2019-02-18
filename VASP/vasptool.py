@@ -196,7 +196,7 @@ class POSCAR:
         self.filename = filename
         self.text_list = list(open(filename, 'r'))
         self.len = len(self.text_list)
-        self.elements: str = self.text_list[5].split()
+        self.elements = self.text_list[5].split()
         self.ele_num = self.text_list[6].split()
         self.cord_type = self.text_list[7].strip()[0]
         # Verify POSCAR
@@ -263,7 +263,7 @@ class POSCAR:
             li.append(float(self.text_list[ind+7].split()[i]))
         return tuple(li)
 
-    def get_element(self, ind=None, pos=None):
+    def get_element(self, ind=None, pos=None) -> str:
         if not(ind or pos):
             raise TypeError('get_element takes atom id or position but none was given.')
         if ind and pos:

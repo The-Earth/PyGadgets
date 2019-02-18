@@ -6,8 +6,8 @@ class OUTCAR:
     def __init__(self, filename='OUTCAR'):
         self.filename = filename
         # get text
-        self.text_list = list(open(filename, 'r'))
-        self.len = len(self.text_list)
+        self.__text_list = list(open(filename, 'r'))
+        self.len = len(self.__text_list)
         # find poscar
         self.poscar = []  # TODO use POSCAR class
         '''
@@ -15,7 +15,7 @@ class OUTCAR:
         [['li','4'],['o','2']]
         which represent sequence of elements and their amount
         '''
-        for line in self.text_list:
+        for line in self.__text_list:
             if 'POSCAR' in line:
                 for comp in line.split():
                     if 'POSCAR' in comp or '=' in comp:
@@ -39,23 +39,23 @@ class OUTCAR:
         # Find start and end
         csStart, csEnd = 0, 0
         for i in range(self.len):
-            if '  UNSYMMETRIZED TENSORS \n' == self.text_list[i]:
+            if '  UNSYMMETRIZED TENSORS \n' == self.__text_list[i]:
                 csStart = i
-            if '  SYMMETRIZED TENSORS \n' == self.text_list[i]:
+            if '  SYMMETRIZED TENSORS \n' == self.__text_list[i]:
                 csEnd = i
                 break
 
         i, tensordia = csStart + 1, 0
         while i < csEnd:
             # get atom id (start from 1)
-            atomid = self.text_list[i].split()[1]
+            atomid = self.__text_list[i].split()[1]
             # add diagonal element of cs tensor
             i += 1
-            tensordia += float(self.text_list[i].split()[0])
+            tensordia += float(self.__text_list[i].split()[0])
             i += 1
-            tensordia += float(self.text_list[i].split()[1])
+            tensordia += float(self.__text_list[i].split()[1])
             i += 1
-            tensordia += float(self.text_list[i].split()[2])
+            tensordia += float(self.__text_list[i].split()[2])
             # log data
             cs.setdefault(int(atomid), str(tensordia/3))
             # move and init
@@ -86,16 +86,16 @@ class OUTCAR:
         """
         start, A_tot_dict = -1, OrderedDict()
         for i in range(self.len):
-            if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.text_list[i]:
+            if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.__text_list[i]:
                 start = i + 4
                 break
 
         if start == -1:
             raise Exception('Fermi contact A not found in OUTCAR')
         i = start
-        while '--' not in self.text_list[i].split()[0]:
-            ind = int(self.text_list[i].split()[0])
-            Afc = float(self.text_list[i].split()[5])
+        while '--' not in self.__text_list[i].split()[0]:
+            ind = int(self.__text_list[i].split()[0])
+            Afc = float(self.__text_list[i].split()[5])
             A_tot_dict[ind] = Afc
             i += 1
 
@@ -105,15 +105,15 @@ class OUTCAR:
         import numpy
         start, A_tensor_dict = -1, OrderedDict()
         for i in range(self.len):
-            if 'Dipolar hyperfine coupling parameters (MHz)' in self.text_list[i]:
+            if 'Dipolar hyperfine coupling parameters (MHz)' in self.__text_list[i]:
                 start = i + 4
                 break
 
         if start == -1:
             raise Exception('Dipolar A not found in OUTCAR')
         i = start
-        while '--' not in self.text_list[i].split()[0]:
-            lt = self.text_list[i].split()
+        while '--' not in self.__text_list[i].split()[0]:
+            lt = self.__text_list[i].split()
             ind = int(lt[0])
             Ad = numpy.mat(((lt[1], lt[4], lt[5]),
                            (lt[4], lt[2], lt[6]),
@@ -126,34 +126,34 @@ class OUTCAR:
     def get_CSA_valence(self):  # Excluding G=0
         start, csa_dict = -1, OrderedDict()
         for i in range(self.len):
-            if '(absolute, valence only)' in self.text_list[i]:
+            if '(absolute, valence only)' in self.__text_list[i]:
                 start = i + 1
                 break
 
         if start == -1:
             raise Exception('CSA tensor valence only not found in OUTCAR.')
         i = start
-        while '--' not in self.text_list[i]:
-            ind = int(self.text_list[i].split()[0])
-            shift = float(self.text_list[i].split()[1])
+        while '--' not in self.__text_list[i]:
+            ind = int(self.__text_list[i].split()[0])
+            shift = float(self.__text_list[i].split()[1])
             csa_dict[ind] = shift
             i += 1
 
         return csa_dict
 
-    def get_magnetization(self) -> OrderedDict:
+    def get_magnetization(self):
         start, mag_dict = -1, OrderedDict()
         for i in range(self.len):
-            if 'magnetization (x)' in self.text_list[i]:
+            if 'magnetization (x)' in self.__text_list[i]:
                 start = i + 4
                 break
 
         if start == -1:
             raise Exception('magnetization (x) not found in OUTCAR.')
         i = start
-        while '--' not in self.text_list[i]:
-            ind = int(self.text_list[i].split()[0])
-            shift = float(self.text_list[i].split()[4])
+        while '--' not in self.__text_list[i]:
+            ind = int(self.__text_list[i].split()[0])
+            shift = float(self.__text_list[i].split()[4])
             mag_dict[ind] = shift
             i += 1
 
@@ -196,7 +196,7 @@ class POSCAR:
         self.filename = filename
         self.text_list = list(open(filename, 'r'))
         self.len = len(self.text_list)
-        self.elements = self.text_list[5].split()
+        self.elements: str = self.text_list[5].split()
         self.ele_num = self.text_list[6].split()
         self.cord_type = self.text_list[7].strip()[0]
         # Verify POSCAR

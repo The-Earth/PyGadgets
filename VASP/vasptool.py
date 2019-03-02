@@ -57,7 +57,7 @@ class OUTCAR:
             i += 1
             tensordia += float(self.__text_list[i].split()[2])
             # log data
-            cs.setdefault(int(atomid), str(tensordia/3))
+            cs.setdefault(int(atomid), str(tensordia / 3))
             # move and init
             i += 1
             tensordia = 0
@@ -66,14 +66,14 @@ class OUTCAR:
         preatom = 0
         for i in range(len(self.poscar)):
             num = int(self.poscar[i][1])
-            for j in range(1, num+1):
-                cs[preatom+j] = self.poscar[i][0] + ','+cs[preatom+j]
+            for j in range(1, num + 1):
+                cs[preatom + j] = self.poscar[i][0] + ',' + cs[preatom + j]
             preatom += num
 
         # write to file
         if out:
             for i in range(len(cs)):
-                t = str(i)+','+cs[i+1]+'\n'
+                t = str(i) + ',' + cs[i + 1] + '\n'
                 with open(out, 'a') as f:
                     f.write(t)
 
@@ -116,8 +116,8 @@ class OUTCAR:
             lt = self.__text_list[i].split()
             ind = int(lt[0])
             Ad = numpy.mat(((lt[1], lt[4], lt[5]),
-                           (lt[4], lt[2], lt[6]),
-                           (lt[5], lt[6], lt[3])), dtype='float64')
+                            (lt[4], lt[2], lt[6]),
+                            (lt[5], lt[6], lt[3])), dtype='float64')
             A_tensor_dict[ind] = Ad
             i += 1
 
@@ -158,6 +158,28 @@ class OUTCAR:
             i += 1
 
         return mag_dict
+
+    def get_A1c(self):
+        """
+        :return: An ordered dict with atom index as keys and A1c as values
+                {1: 2.33, 2:3.44 ...}
+        """
+        start, A_1c_dict = -1, OrderedDict()
+        for i in range(self.len):
+            if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.__text_list[i]:
+                start = i + 4
+                break
+
+        if start == -1:
+            raise Exception('Fermi contact A not found in OUTCAR')
+        i = start
+        while '--' not in self.__text_list[i].split()[0]:
+            ind = int(self.__text_list[i].split()[0])
+            A1c = float(self.__text_list[i].split()[4])
+            A_1c_dict[ind] = A1c
+            i += 1
+
+        return A_1c_dict
 
 
 class INCAR:
@@ -241,7 +263,7 @@ class POSCAR:
                 a = float(self.text_list[line_id].split()[0])
                 b = float(self.text_list[line_id].split()[1])
                 c = float(self.text_list[line_id].split()[2])
-                pos_dic[line_id-7] = (self.elements[i], a, b, c)
+                pos_dic[line_id - 7] = (self.elements[i], a, b, c)
                 line_id += 1
 
         if out:
@@ -260,11 +282,11 @@ class POSCAR:
     def get_pos(self, ind):
         li = []
         for i in range(3):
-            li.append(float(self.text_list[ind+7].split()[i]))
+            li.append(float(self.text_list[ind + 7].split()[i]))
         return tuple(li)
 
     def get_element(self, ind=None, pos=None) -> str:
-        if not(ind or pos):
+        if not (ind or pos):
             raise TypeError('get_element takes atom id or position but none was given.')
         if ind and pos:
             raise TypeError('get_element takes one of atom id or position but 2 were given')

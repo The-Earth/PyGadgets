@@ -1,3 +1,4 @@
+# mass submission
 from vasptool import INCAR
 import os
 import shutil

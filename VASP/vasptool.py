@@ -7,7 +7,6 @@ class OUTCAR:
         self.filename = filename
         # get text
         self.__text_list = list(open(filename, 'r'))
-        self.len = len(self.__text_list)
         # find poscar
         self.poscar = []  # TODO use POSCAR class
         '''
@@ -27,6 +26,12 @@ class OUTCAR:
                             pass
                 break
 
+    def __len__(self):
+        return len(self.__text_list)
+
+    def get_whole_text(self):
+        return ''.join(self.__text_list)
+
     def getcs_tensor(self, out=None):
         """
         cs is in form of:
@@ -38,7 +43,7 @@ class OUTCAR:
         cs = dict()
         # Find start and end
         csStart, csEnd = 0, 0
-        for i in range(self.len):
+        for i in range(len(self.__text_list)):
             if '  UNSYMMETRIZED TENSORS \n' == self.__text_list[i]:
                 csStart = i
             if '  SYMMETRIZED TENSORS \n' == self.__text_list[i]:
@@ -85,7 +90,7 @@ class OUTCAR:
                 {1: 2.33, 2:3.44 ...}
         """
         start, A_tot_dict = -1, OrderedDict()
-        for i in range(self.len):
+        for i in range(len(self.__text_list)):
             if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.__text_list[i]:
                 start = i + 4
                 break
@@ -104,7 +109,7 @@ class OUTCAR:
     def get_Adp(self):
         import numpy
         start, A_tensor_dict = -1, OrderedDict()
-        for i in range(self.len):
+        for i in range(len(self.__text_list)):
             if 'Dipolar hyperfine coupling parameters (MHz)' in self.__text_list[i]:
                 start = i + 4
                 break
@@ -125,7 +130,7 @@ class OUTCAR:
 
     def get_CSA_valence(self):  # Excluding G=0
         start, csa_dict = -1, OrderedDict()
-        for i in range(self.len):
+        for i in range(len(self.__text_list)):
             if '(absolute, valence only)' in self.__text_list[i]:
                 start = i + 1
                 break
@@ -143,7 +148,7 @@ class OUTCAR:
 
     def get_magnetization(self):
         start, mag_dict = -1, OrderedDict()
-        for i in range(self.len):
+        for i in range(len(self.__text_list)):
             if 'magnetization (x)' in self.__text_list[i]:
                 start = i + 4
                 break
@@ -165,7 +170,7 @@ class OUTCAR:
                 {1: 2.33, 2:3.44 ...}
         """
         start, A_1c_dict = -1, OrderedDict()
-        for i in range(self.len):
+        for i in range(len(self.__text_list)):
             if 'Fermi contact (isotropic) hyperfine coupling parameter (MHz)' in self.__text_list[i]:
                 start = i + 4
                 break
@@ -191,6 +196,9 @@ class INCAR:
             self.text_list = list(open(filename, 'r'))
         except FileNotFoundError:
             self.text_list = list()
+
+    def __len__(self):
+        return len(self.text_list)
 
     def set_key(self, key, value):
         text_to_set = '\n%s = %s # Set by vasptool\n' % (key, value)
@@ -305,10 +313,7 @@ class POSCAR:
         pass
 
 
-class CONTCAR(POSCAR):
-
-    def __init__(self, filename='CONTCAR'):
-        POSCAR.__init__(self, filename=filename)
+class CONTCAR(POSCAR, filename='CONTCAR'):
 
     def save_as(self, out='POSCAR'):
         with open(out, 'w') as f:

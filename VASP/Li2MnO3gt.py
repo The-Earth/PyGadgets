@@ -67,7 +67,14 @@ if __name__ == '__main__':
     ligt = numpy.mat([[1.93144358e+00, 1.00220000e-04, -5.94090000e-04],
                       [-7.63500000e-05, 1.93384854e+00, -5.98200000e-05],
                       [1.95329000e-03, -6.91010000e-04, 1.92834891e+00]], dtype='float64')
-    g_iso = numpy.trace(ligt) / 3 - ge
+
+
+    def get_gtensor() -> numpy.mat:
+        if os.path.exists('gtensor.csv'):
+            temp = numpy.mat(numpy.loadtxt('gtensor.csv', dtype='float64', delimiter=','))
+            return temp / 1e6 + 2 * numpy.identity(3)
+        else:
+            return ligt
 
 
     def Li2CO3_exp(ind):
@@ -107,6 +114,8 @@ if __name__ == '__main__':
         afc = outcar.get_Afc()
         a1c = outcar.get_A1c()
         magnet = outcar.get_magnetization()
+        gtensor = get_gtensor()
+        g_iso = numpy.trace(gtensor) / 3 - ge
         cssum, csfc, csdp, csfc_t, csfc_exp, cs_plus_1c = [], [], [], [], [], []
 
         for i in range(len(adp)):  # Calculation
@@ -115,7 +124,8 @@ if __name__ == '__main__':
             csfc.append(N * Mhz2ppm(mhz=afc[i + 1], S=S_d[ele], gn=gn_d[ele]))  # ge
 
             csdp.append(
-                N * Mhz2ppm(mhz=numpy.trace((adp[i + 1] * ligt) * ligt) / (3 * ge), S=S_d[ele], gn=gn_d[ele]))  # A_dp
+                N * Mhz2ppm(mhz=numpy.trace((adp[i + 1] * gtensor) * gtensor) / (3 * ge), S=S_d[ele],
+                            gn=gn_d[ele]))  # A_dp
 
             csfc_t.append(csfc[-1] + g_iso * csfc[-1] / ge)
             cssum.append(csfc[-1] + csdp[-1] + outcar.get_CSA_valence()[i + 1] + g_iso * csfc[-1] / ge)

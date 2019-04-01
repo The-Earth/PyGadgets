@@ -130,29 +130,25 @@ if __name__ == '__main__':
             csfc_t.append(csfc[-1] + g_iso * csfc[-1] / ge)
             cssum.append(csfc[-1] + csdp[-1] + outcar.get_CSA_valence()[i + 1] + g_iso * csfc[-1] / ge)
 
-            csfc_exp.append(
-                (Li2MnO3_exp(i + 1) - Li2CO3_exp(i + 1)) - (outcar.get_CSA_valence()[i + 1] - Li2CO3_cal(i + 1)) - csdp[-1])
+            csfc_exp.append((Li2MnO3_exp(i + 1) - Li2CO3_exp(i + 1)) - (outcar.get_CSA_valence()[i + 1]
+                                                                        - Li2CO3_cal(i + 1)) - csdp[-1])
 
             cs_plus_1c.append(N * Mhz2ppm(S=S_d[ele], mhz=a1c[i + 1] + afc[i + 1], gn=gn_d[ele]))
 
         # Write file
         with open('../cs.csv', 'a') as f:
-            f.write(
-                '%s\nindex,element,magnetization (x),CSA,Afc(MHz),Afc(ppm),Adp(ppm),Sum,Afc_tot(ppm),Afc_exp,Atot+A1c(fc)\n' % name)
+            f.write(f'{name}\nindex,element,magnetization (x),CSA,Afc(MHz),Afc(ppm),Adp(ppm),Sum,Afc_tot(ppm),'
+                    f'Afc_exp,Atot+A1c(fc)\n')
         for i in range(len(adp)):
             try:
-                t = '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % ((i + 1), poscar.get_element(ind=i + 1), magnet[i + 1],
-                                                            outcar.get_CSA_valence()[i + 1], afc[i + 1],
-                                                            csfc[i], csdp[i], cssum[i], csfc_t[i], csfc_exp[i],
-                                                            cs_plus_1c[i])
+                t = f'{(i + 1)},{poscar.get_element(ind=i + 1)},{magnet[i + 1]},{outcar.get_CSA_valence()[i + 1]},\
+                        {afc[i + 1]},{csfc[i]},{csdp[i]},{cssum[i]},{csfc_t[i]},{csfc_exp[i]},{cs_plus_1c[i]}\n'
             except Exception as err:
                 if err.args[0] != 'magnetization (x) not found in OUTCAR.':
                     raise
                 else:
-                    t = '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' % ((i + 1), poscar.get_element(ind=i + 1), 'N.A.',
-                                                                outcar.get_CSA_valence()[i + 1], afc[i + 1],
-                                                                csfc[i], csdp[i], cssum[i], csfc_t[i], csfc_exp[i],
-                                                                cs_plus_1c[i])
+                    t = f'{(i + 1)},{poscar.get_element(ind=i + 1)},{"N.A."},{outcar.get_CSA_valence()[i + 1]},\
+                            {afc[i + 1]},{csfc[i]},{csdp[i]},{cssum[i]},{csfc_t[i]},{csfc_exp[i]},{cs_plus_1c[i]}\n'
             with open('../cs.csv', 'a') as f:
                 f.write(t)
 

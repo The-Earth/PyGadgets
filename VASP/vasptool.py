@@ -313,7 +313,10 @@ class POSCAR:
         pass
 
 
-class CONTCAR(POSCAR, filename='CONTCAR'):
+class CONTCAR(POSCAR):
+
+    def __init__(self, filename='CONTCAR'):
+        POSCAR.__init__(self, filename=filename)
 
     def save_as(self, out='POSCAR'):
         with open(out, 'w') as f:

@@ -131,7 +131,7 @@ if __name__ == '__main__':
             cssum.append(csfc[-1] + csdp[-1] + outcar.get_CSA_valence()[i + 1] + g_iso * csfc[-1] / ge)
 
             csfc_exp.append(
-                (cssum[-1] - Li2CO3_exp(i + 1)) - (outcar.get_CSA_valence()[i + 1] - Li2CO3_cal(i + 1)) - csdp[-1])
+                (Li2MnO3_exp(i + 1) - Li2CO3_exp(i + 1)) - (outcar.get_CSA_valence()[i + 1] - Li2CO3_cal(i + 1)) - csdp[-1])
 
             cs_plus_1c.append(N * Mhz2ppm(S=S_d[ele], mhz=a1c[i + 1] + afc[i + 1], gn=gn_d[ele]))
 

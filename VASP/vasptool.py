@@ -201,7 +201,7 @@ class INCAR:
         return len(self.text_list)
 
     def set_key(self, key, value):
-        text_to_set = '\n%s = %s # Set by vasptool\n' % (key, value)
+        text_to_set = f'\n{key} = {value} # Set by vasptool\n'
         done = 0
         for i in range(len(self.text_list)):
             if key in self.text_list[i]:
@@ -283,7 +283,7 @@ class POSCAR:
                 b = pos_dic[ele][2]
                 c = pos_dic[ele][3]
                 with open(out, 'a') as f:
-                    f.write('%d,%s,%f,%f,%f\n' % (ele, element, a, b, c))
+                    f.write(f'{ele:d},{element},{a:f},{b:f},{c:f}\n')
 
         return pos_dic
 

@@ -54,6 +54,24 @@ def Mhz2ppm(mhz, S, gn, T=330, T0=-34):
     return AfcRho2ppm(S=S, rho=AfcMHz2Rho(mhz=mhz, gn=gn, S=S), T=T, T0=T0)
 
 
+def QISHz(Cq_MHz, eta, I, m, n, v0_MHz):
+    ### Cq, v0: MHz
+    ### Please add this QIS to Delta_iso
+    Cq = Cq_MHz * 1e6
+    v0 = v0_MHz * 1e6
+    y = pow(3. * Cq / (2. * I * (2. * I - 1)), 2) * 56. / (5040. * v0) * (3. + eta * eta) * (
+            m * (I * (I + 1.) - 3. * m * m) - n * (I * (I + 1.) - 3. * n * n))
+    return y
+
+
+def QISppm(Cq_MHz, eta, I, m, n, v0_MHz):
+    ### Cq, v0: MHz
+    y = QISHz(Cq_MHz, eta, I, m, n, v0_MHz)
+    # y=y/(v0_MHz*1e6)*1e6
+    y = y / v0_MHz
+    return -y
+
+
 if __name__ == '__main__':
     from vasptool import OUTCAR
     from vasptool import POSCAR
@@ -63,6 +81,10 @@ if __name__ == '__main__':
     # Constants
     gn_d = {'Li': 0.8219, 'O': 0.757, 'Mn': 1}
     S_d = {'Li': 1.5, 'O': 1.5, 'Mn': 1.5}
+    I = {'Li': 1, 'O': 2.5, 'Mn': 1}
+    m = {'Li': 1, 'O': 0.5, 'Mn': 1}
+    n = {'Li': 0, 'O': -0.5, 'Mn': 1}
+    v0 = {'Li': 29.47, 'O': 67.552, 'Mn': 1}
     N = 4
     ligt = numpy.mat([[1.93144358e+00, 1.00220000e-04, -5.94090000e-04],
                       [-7.63500000e-05, 1.93384854e+00, -5.98200000e-05],
@@ -113,42 +135,45 @@ if __name__ == '__main__':
         adp = outcar.get_Adp()
         afc = outcar.get_Afc()
         a1c = outcar.get_A1c()
+        quad = outcar.get_quad()
         magnet = outcar.get_magnetization()
         gtensor = get_gtensor()
         g_iso = numpy.trace(gtensor) / 3 - ge
-        cssum, csfc, csdp, csfc_t, csfc_exp, cs_plus_1c = [], [], [], [], [], []
+        cssum, csfc, csdp, csfc_t, csfc_exp, cs_plus_1c, qis = [], [], [], [], [], [], []
 
         for i in range(len(adp)):  # Calculation
             ele = poscar.get_element(ind=i + 1)
             # S = float(input('S for atom %s%s: ' % (str(i+1), ele)))
             csfc.append(N * Mhz2ppm(mhz=afc[i + 1], S=S_d[ele], gn=gn_d[ele]))  # ge
-
-            csdp.append(
-                N * Mhz2ppm(mhz=numpy.trace((adp[i + 1] * gtensor) * gtensor) / (3 * ge), S=S_d[ele],
-                            gn=gn_d[ele]))  # A_dp
+            qis.append(QISppm(quad[i + 1]['cq'], quad[i + 1]['eta'], I=I[ele], m=m[ele], n=n[ele], v0_MHz=v0[ele]))
+            csdp.append(N * Mhz2ppm(mhz=numpy.trace((adp[i + 1] * gtensor) * gtensor) / (3 * ge), S=S_d[ele],
+                                    gn=gn_d[ele]))  # A_dp
 
             csfc_t.append(csfc[-1] + g_iso * csfc[-1] / ge)
-            cssum.append(csfc[-1] + csdp[-1] + outcar.get_CSA_valence()[i + 1] + g_iso * csfc[-1] / ge)
+            cssum.append(csfc[-1] + csdp[-1] + outcar.get_CSA_valence()[i + 1] + g_iso * csfc[-1] / ge + qis[-1])
 
             csfc_exp.append((Li2MnO3_exp(i + 1) - Li2CO3_exp(i + 1)) - (outcar.get_CSA_valence()[i + 1]
-                                                                        - Li2CO3_cal(i + 1)) - csdp[-1])
+                                                                        - Li2CO3_cal(i + 1)) - csdp[-1] - qis[-1])
 
             cs_plus_1c.append(N * Mhz2ppm(S=S_d[ele], mhz=a1c[i + 1] + afc[i + 1], gn=gn_d[ele]))
 
         # Write file
         with open('../cs.csv', 'a') as f:
-            f.write(f'{name}\nindex,element,magnetization (x),CSA,Afc(MHz),Afc(ppm),Adp(ppm),Sum,Afc_tot(ppm),'
-                    f'Afc_exp,Atot+A1c(fc)\n')
+            f.write(
+                f'{name}\nindex,element,magnetization (x),CSA,Afc(MHz),CQ(MHz),eta,Afc(ppm),Adp(ppm),Sum,Afc_tot(ppm),'
+                f'Afc_exp,Atot+A1c(fc)\n')
         for i in range(len(adp)):
             try:
-                t = f'{(i + 1)},{poscar.get_element(ind=i + 1)},{magnet[i + 1]},{outcar.get_CSA_valence()[i + 1]},\
-                        {afc[i + 1]},{csfc[i]},{csdp[i]},{cssum[i]},{csfc_t[i]},{csfc_exp[i]},{cs_plus_1c[i]}\n'
+                t = f'{(i + 1)},{poscar.get_element(ind=i + 1)},{magnet[i + 1]},{outcar.get_CSA_valence()[i + 1]},' \
+                    f'{afc[i + 1]},{quad[i + 1]["cq"]},{quad[i + 1]["eta"]},{csfc[i]},{csdp[i]},{cssum[i]},' \
+                    f'{csfc_t[i]},{csfc_exp[i]},{cs_plus_1c[i]}\n'
             except Exception as err:
                 if err.args[0] != 'magnetization (x) not found in OUTCAR.':
                     raise
                 else:
-                    t = f'{(i + 1)},{poscar.get_element(ind=i + 1)},{"N.A."},{outcar.get_CSA_valence()[i + 1]},\
-                            {afc[i + 1]},{csfc[i]},{csdp[i]},{cssum[i]},{csfc_t[i]},{csfc_exp[i]},{cs_plus_1c[i]}\n'
+                    t = f'{(i + 1)},{poscar.get_element(ind=i + 1)},{"N.A."},{outcar.get_CSA_valence()[i + 1]},' \
+                        f'{afc[i + 1]},{quad[i + 1]["cq"]},{quad[i + 1]["eta"]},{csfc[i]},{csdp[i]},{cssum[i]},' \
+                        f'{csfc_t[i]},{csfc_exp[i]},{cs_plus_1c[i]}\n'
             with open('../cs.csv', 'a') as f:
                 f.write(t)
 

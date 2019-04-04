@@ -186,6 +186,29 @@ class OUTCAR:
 
         return A_1c_dict
 
+    def get_quad(self):
+        """
+        :return: An ordered dict with atom index as keys and A1c as values
+                {1: 2.33, 2:3.44 ...}
+        """
+        start, quad_dict = -1, OrderedDict()
+        for i in range(len(self.__text_list)):
+            if 'NMR quadrupolar parameters' in self.__text_list[i]:
+                start = i + 8
+                break
+
+        if start == -1:
+            raise Exception('NMR quadrupolar parameters not found in OUTCAR')
+        i = start
+        while '--' not in self.__text_list[i].split()[0]:
+            ind = int(self.__text_list[i].split()[0])
+            cq = float(self.__text_list[i].split()[1])
+            eta = float(self.__text_list[i].split()[2])
+            quad_dict[ind] = OrderedDict({'cq':cq, 'eta':eta})
+            i += 1
+
+        return quad_dict
+
 
 class INCAR:
 

@@ -66,7 +66,7 @@ def QISHz(Cq_MHz, eta, I, m, n, v0_MHz):
 
 def QISppm(Cq_MHz, eta, I, m, n, v0_MHz):
     ### Cq, v0: MHz
-    y = QISHz(Cq_MHz, eta, I, m, n, v0_MHz)
+    y = QISHz(Cq_MHz=Cq_MHz, eta=eta, I=I, m=m, n=n, v0_MHz=v0_MHz)
     # y=y/(v0_MHz*1e6)*1e6
     y = y / v0_MHz
     return -y
@@ -85,6 +85,7 @@ if __name__ == '__main__':
     m = {'Li': 1, 'O': 0.5, 'Mn': 1}
     n = {'Li': 0, 'O': -0.5, 'Mn': 1}
     v0 = {'Li': 29.47, 'O': 67.552, 'Mn': 1}
+    T = {'Li': 323, 'O': 340, 'Mn': 330}
     N = 4
     ligt = numpy.mat([[1.93144358e+00, 1.00220000e-04, -5.94090000e-04],
                       [-7.63500000e-05, 1.93384854e+00, -5.98200000e-05],
@@ -144,8 +145,9 @@ if __name__ == '__main__':
         for i in range(len(adp)):  # Calculation
             ele = poscar.get_element(ind=i + 1)
             # S = float(input('S for atom %s%s: ' % (str(i+1), ele)))
-            csfc.append(N * Mhz2ppm(mhz=afc[i + 1], S=S_d[ele], gn=gn_d[ele]))  # ge
-            qis.append(QISppm(quad[i + 1]['cq'], quad[i + 1]['eta'], I=I[ele], m=m[ele], n=n[ele], v0_MHz=v0[ele]))
+            csfc.append(N * Mhz2ppm(mhz=afc[i + 1], S=S_d[ele], gn=gn_d[ele], T=T[ele]))  # ge
+            qis.append(QISppm(Cq_MHz=quad[i + 1]['cq'], eta=quad[i + 1]['eta'], I=I[ele], m=m[ele], n=n[ele],
+                              v0_MHz=v0[ele]))
             csdp.append(N * Mhz2ppm(mhz=numpy.trace((adp[i + 1] * gtensor) * gtensor) / (3 * ge), S=S_d[ele],
                                     gn=gn_d[ele]))  # A_dp
 

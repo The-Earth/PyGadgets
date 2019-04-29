@@ -204,7 +204,7 @@ class OUTCAR:
             ind = int(self.__text_list[i].split()[0])
             cq = float(self.__text_list[i].split()[1])
             eta = float(self.__text_list[i].split()[2])
-            quad_dict[ind] = OrderedDict({'cq':cq, 'eta':eta})
+            quad_dict[ind] = OrderedDict({'cq': cq, 'eta': eta})
             i += 1
 
         return quad_dict

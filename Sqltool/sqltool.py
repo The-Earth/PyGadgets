@@ -60,7 +60,7 @@ class Table:
         return column
 
     def get_all(self) -> list:
-        self.__cur.execute("Select * from Student")
+        self.__cur.execute(f"Select * from {self.name}")
         return self.__cur.fetchall()
 
     def insert(self, **datadict):
